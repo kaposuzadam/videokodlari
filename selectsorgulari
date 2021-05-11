@@ -1,0 +1,27 @@
+select * from ogrenci_ders;
+
+select * from ogrenci_ders order by vize;
+
+select * from ogrenci_ders where final = 30;
+
+select * from ogrenci_ders limit 3 ;
+
+select * from ogrenci_ders where vize = 40 and final = 50;
+select * from ogrenci_ders where vize = 70 or vize = 40;
+
+select * from ogrenci_ders where vize between 70 and 100;
+
+select count(*) from ogrenci_ders where vize = 70;
+
+select * from ogrenci_ders;
+
+select Max(vize) from ogrenci_ders;
+
+select ogrenci_id, vize from ogrenci_ders where vize = (Select Max(vize) from ogrenci_ders);
+ 
+select Min(vize) from ogrenci_ders;
+select ogrenci_id, vize from ogrenci_ders where vize = (Select Min(vize) from ogrenci_ders);
+
+select avg(final) from ogrenci_ders;
+
+select length(isim) from ogrenci ; 

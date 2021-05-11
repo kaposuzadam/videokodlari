@@ -1,0 +1,33 @@
+use okul;
+
+insert into `bolum` (id,bolum_adi) 
+values (null,'Bilgisayar Öğretmenliği'),(null,'Biyoloji Öğretmenliği'),
+(null,'Psikoloji'),(null,'Okul Öncesi'),(null,'Matematik');
+select * from bolum;
+
+insert into `anabd` (id,bolum_id) 
+values (null,6),(null,7),(null,8),(null,9),(null,10);
+
+select * from anabd;
+
+insert into `ogrenci` (id,isim,okul_no,abd_id)
+values(null,'Canberk',201910210005,6);
+select * from ogrenci;
+insert into `ogrenci` (id,isim,okul_no,abd_id)
+values(null,'Berkin',201910210002,7),(null,'Murat',201910210004,8),
+(null,'Diya',201910210008,9),(null,'ErcüBaba',201910210003,10);
+
+select * from ogrenci; 
+
+insert into `ders` (id,ders_adi,kredi)
+values (null,'Programlama',3),(null,'Drama',4),(null,'Matematik',1),
+(null,'Psikoloji',3),(null,'Sosyoloji',3);
+select * from ders;
+
+insert into `ogrenci_ders` (id,ogrenci_id,ders_id,vize,final)
+values(null,1,2,70,80),(null,2,1,80,70),(null,3,3,70,30),
+(null,4,5,40,10),(null,5,4,100,100);
+
+select * from ogrenci_ders;
+
+update `ogrenci_ders` set final = 50 where id = 4;

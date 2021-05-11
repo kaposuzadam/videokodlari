@@ -1,0 +1,39 @@
+create database if not exists okul
+default character set utf8
+default collate utf8_turkish_ci;
+
+use okul;
+
+create table `bolum` (
+id int not null auto_increment primary key, 
+bolum_adi varchar(40) not null);
+
+create table `anabd` (
+id int not null auto_increment primary key,
+bolum_id int not null unique);
+
+create table `ogrenci` (
+id int not null auto_increment primary key,
+isim varchar(20) not null,
+okul_no char(12) not null unique,
+abd_id int not null );
+
+create table `ders` (
+id int not null auto_increment primary key,
+ders_adi varchar(40) not null,
+kredi int not null);
+
+create table `ogrenci_ders` (
+id int not null auto_increment primary key,
+ogrenci_id int not null,
+ders_id int not null,
+vize int,
+final int ); 
+
+show databases;
+show tables;
+select * from anabd;
+select * from bolum;
+select * from ders;
+select * from ogrenci;
+select * from ogrenci_ders;

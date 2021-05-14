@@ -1,0 +1,152 @@
+from tkinter import *
+import sqlite3
+from tkinter import ttk
+from tkinter import messagebox
+from tkinter import filedialog, PhotoImage
+from PIL import Image, ImageTk
+import os
+
+root = Tk()
+root.title("Adres Defterim")
+root.geometry("1050x400")
+
+baslik = Label(text="Adres Defteri", font=('Arial', 15))
+baslik.place(x=1, y=1)
+
+isim = StringVar()
+numara = StringVar()
+detay = StringVar()
+
+
+def vtbaglan():
+    global baglan, cursor
+    baglan = sqlite3.connect("adresdefterim.db")
+    cursor = baglan.cursor()
+
+    sql = """ create table if not exists `kisilerim` (
+    id integer primary key autoincrement not null,
+    isim text,
+    numara text,
+    detay)
+    """
+    cursor.execute(sql)
+    baglan.commit()
+
+
+def kayitekle():
+    if isim.get() == "" or numara.get() == "":
+        messagebox.showwarning("Hata", "Eksik Veri Girdiniz.")
+    else:
+        sql = "insert into `kisilerim` (isim,numara,detay) values ('{}','{}','{}')".format(isim.get(),
+                                                                                           numara.get(), detay.get())
+
+        messagebox.showinfo("Başarılı", "Başarıyla Kaydedildi!")
+        cursor.execute(sql)
+        baglan.commit()
+
+
+def cikis():
+    soru = messagebox.askyesno("Çıkış", "Çıkmak İstediğiniz Emin Misiniz?", icon='question')
+    if soru == YES:
+        root.quit()
+
+
+def sil():
+    for sil_id in tree.selection():
+        sql = "Delete from kisilerim where id = {}".format(tree.item(sil_id)['values'][0])
+        cursor.execute(sql)
+    baglan.commit()
+    tree.delete(*tree.selection())
+
+
+def sirala():
+    global tree
+    tree.delete(*tree.get_children())
+    sql = "Select * from kisilerim order by isim"
+    cursor.execute(sql)
+    veriler = cursor.fetchall()
+    for satir in veriler:
+        tree.insert('', 'end', values=(satir[0], satir[1], satir[2], satir[3]))
+
+
+def oku():
+    global tree
+    tree.delete(*tree.get_children())
+    sql = "Select * from kisilerim order by id"
+    cursor.execute(sql)
+    veriler = cursor.fetchall()
+    for satir in veriler:
+        tree.insert('', 'end', values=(satir[0], satir[1], satir[2], satir[3]))
+
+
+def resim():
+    dosya = filedialog.askopenfilename(initialdir=":/",
+                                       title="Resim Seçiniz",
+                                       filetypes=(("All Files", "*.*"),
+                                                  ("PNG File", "*.png"),
+                                                  ("jpeg", "*.jpg")))
+    resim = Image.open(dosya)
+    resim = ImageTk.PhotoImage(resim)
+    resimlbl.configure(image=resim, width=100, height=100)
+    resimlbl.image = resim
+
+
+resimlbl = Label(root)
+resimlbl.place(x=400, y=60)
+
+etiket = Label(text="Ad Soyad")
+etiket.place(x=1, y=60)
+giris = Entry(width=50, textvariable=isim)
+giris.place(x=60, y=61)
+
+etiket2 = Label(text="Numara")
+etiket2.place(x=1, y=90)
+giris2 = Entry(width=50, textvariable=numara)
+giris2.place(x=60, y=90)
+
+etiket3 = Label(text="Fotoğraf")
+etiket3.place(x=1, y=120)
+giris3 = Entry(width=30)
+giris3.place(x=60, y=120)
+
+gozat = Button(text="Gözat", fg='black', bg='yellow', command=resim)
+gozat.place(x=260, y=110)
+
+etiket4 = Label(text="Açıklama")
+etiket4.place(x=1, y=150)
+giris4 = Entry(width=50, textvariable=detay)
+giris4.place(x=60, y=150)
+
+buton = Button(text="Kaydet", fg='red', bg='black', command=kayitekle)
+buton.place(x=185, y=180)
+
+buton2 = Button(text="Listele", fg='black', bg='yellow', command=oku)
+buton2.place(x=1, y=220)
+
+buton3 = Button(text="Sil", fg='black', bg='yellow', command=sil)
+buton3.place(x=1, y=250)
+
+buton4 = Button(text="İsme Göre Sırala", fg='black', bg='yellow', command=sirala)
+buton4.place(x=1, y=280)
+
+buton5 = Button(text="Çıkış", fg='black', bg='yellow', command=cikis)
+buton5.place(x=1, y=310)
+
+tree = ttk.Treeview(root, columns=("id", "isim", "tel", "detay"),
+                    selectmode='extended')
+
+tree.heading("id", text="ID", anchor=W)
+tree.heading("isim", text="Ad Soyad", anchor=W)
+tree.heading("tel", text="Numara", anchor=W)
+tree.heading("detay", text="Açıklama", anchor=W)
+
+tree.column("#0", stretch=NO, minwidth=0, width=0)
+tree.column("#1", stretch=NO, minwidth=0, width=70)
+tree.column("#2", stretch=NO, minwidth=0, width=200)
+tree.column("#3", stretch=NO, minwidth=0, width=200)
+tree.column("#4", stretch=NO, minwidth=0, width=200)
+
+tree.place(x=370, y=180, width=650, height=200)
+
+vtbaglan()
+root.mainloop()
